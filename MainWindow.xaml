@@ -69,48 +69,50 @@
         
         <Grid.ColumnDefinitions>  
            <ColumnDefinition Width="*" />  
+           <ColumnDefinition Width="0.8*" />  
            <ColumnDefinition Width="*" />  
+           <ColumnDefinition Width="0.8*" />  
            <ColumnDefinition Width="*" />  
-           <ColumnDefinition Width="*" />  
-           <ColumnDefinition Width="*" />  
-           <ColumnDefinition Width="*" />  
+           <ColumnDefinition Width="0.8*" />  
        </Grid.ColumnDefinitions>
 
-        <Border Height="150" Width="50" Style="{StaticResource ShadowBox}">
-                <Border>
-                    <Border.Effect>
-                        <DropShadowEffect Color="White" BlurRadius="8" ShadowDepth="5" Opacity="0.8" Direction="145"/>
-                    </Border.Effect>
-                            <Rectangle Fill="#292d33"/>
-                </Border>
-            </Border>
-        
-        <Border Height="150" Width="50" Style="{StaticResource Emission}">
-        <StackPanel Height="150" Width="50" Background="Transparent">
-            
-            <Grid Height="150">
-                <Grid.RowDefinitions>  
-                   <RowDefinition Height="*" />  
-                   <RowDefinition Height="*" />  
-                   <RowDefinition Height="*" />  
-               </Grid.RowDefinitions>
-                
-                <TextBlock Grid.Row="0" Text="0"/>
-                <TextBlock Grid.Row="1" Text="1"/>
-                <TextBlock Grid.Row="2" Text="2"/>
-                
-                </Grid>
-                
-            </StackPanel>
-        </Border>
+            <Grid Grid.Column="0">
 
+                <Border Height="150" Width="50" Style="{StaticResource ShadowBox}">
+                    <Border>
+                        <Border.Effect>
+                            <DropShadowEffect Color="White" BlurRadius="8" ShadowDepth="5" Opacity="0.8" Direction="145"/>
+                        </Border.Effect>
+                        <Rectangle Fill="#292d33"/>
+                    </Border>
+                </Border>
+
+
+                <Border Height="150" Width="50" Style="{StaticResource Emission}">
+                    <StackPanel Height="150" Width="50" Background="Transparent">
+                        <Grid Height="150">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="0"/>
+                            <TextBlock Grid.Row="1" Text="1"/>
+                            <TextBlock Grid.Row="2" Text="2"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <!--TODO Manually or Auto Add the Rest of Hour
+                Minute and Second Grids-->
+        
+        
+        
+        
+        
         </Grid>
         
-        <!--
-        <Border Height="50" Style="{StaticResource TransparentGlow}" CornerRadius="5" Margin="20,0,20,0">
-            <Rectangle Fill="Transparent" Stroke="White" StrokeThickness=".1"/>
-        </Border>
-        -->
+        
     </Grid>
 
    
