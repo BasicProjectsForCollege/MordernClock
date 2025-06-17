@@ -17,47 +17,62 @@ namespace MordernClock
     {
        
         Color Color = Color.FromArgb(255, 51, 51, 51);
+        
+        TranslateTransform[] gridTransforms = new TranslateTransform[3];
+        double[] currPositions = new double[3];
         public MainWindow()
         {
             
             InitializeComponent();
             DataContext = this;
-            KeyboardDevice keyboard = Keyboard.PrimaryDevice;
             GENERATEGRIDCOLUMNS();
-
+            
+            
 
         }
-        int curr_pos = 0;
+        
         TimeSpan time = new TimeSpan(0, 0, 0);
         void OnInput(object sender,KeyEventArgs e)
         {
-            
+            int grid_index=2;
 
+
+            if (grid_index < 0 || grid_index > gridTransforms.Length) return;
+            DoubleAnimation animation = new DoubleAnimation();
+            animation.From = currPositions[grid_index];
+            animation.To = currPositions[grid_index];
+            animation.Duration = new Duration(TimeSpan.FromSeconds(1));
             switch (e.Key)
             {
                 case Key.W:
                     {
-
-                        DoubleAnimation animation = new DoubleAnimation();
-                        animation.From = curr_pos;
-                        curr_pos += 50;
-                        animation.To = curr_pos;
-                        
-                        animation.Duration = new Duration(TimeSpan.FromSeconds(1));
-
-                        //MyTranslate.BeginAnimation(TranslateTransform.YProperty,animation);
-                        break;
-                    }
+                        if (grid_index <= 2)
+                        {
+                            animation.From = currPositions[grid_index];
+                            currPositions[grid_index] += 50;
+                            animation.To = currPositions[grid_index];
+                            
+                            gridTransforms[grid_index].BeginAnimation(TranslateTransform.YProperty, animation);
+                            break;
+                        }
+                        else
+                        {
+                            animation.From = currPositions[grid_index];
+                            currPositions[grid_index] += 15;
+                            animation.To = currPositions[grid_index];
+                            
+                            gridTransforms[grid_index].BeginAnimation(TranslateTransform.YProperty, animation);
+                            break;
+                        }
+                        }
                 case Key.S:
                     {
-
-                        DoubleAnimation animation = new DoubleAnimation();
-                        animation.From = curr_pos;
-                        curr_pos -= 50;
-                        animation.To = curr_pos;
-                        animation.Duration = new Duration(TimeSpan.FromSeconds(1));
-
-                        //MyTranslate.BeginAnimation(TranslateTransform.YProperty, animation);
+                        
+                        
+                        animation.From = currPositions[grid_index];
+                        currPositions[grid_index] -= 50;
+                        animation.To = currPositions[grid_index];
+                        gridTransforms[grid_index].BeginAnimation(TranslateTransform.YProperty, animation);
                         break;
                     }
 
@@ -171,7 +186,7 @@ namespace MordernClock
 
                             Grid.SetRow(text, j-1);
                             Grids[i-1].Children.Add(text);
-                            
+                           
 
                         }
                         else
@@ -211,9 +226,19 @@ namespace MordernClock
                     ParentGrids[i - 1].Width = 50;
                    
                     ParentGrids[i - 1].Children.Add(Grids[i - 1]);
+                    if (i == 2 || i ==3)
+                    {
+                        ParentGrids[i - 1].Margin = new Thickness(0, 0, 0,50);
+                    }
+                    TranslateTransform indivisualTransform = new TranslateTransform();
+                    gridTransforms[i - 1] = indivisualTransform;
+                    currPositions[i - 1] = 0;
+                    ParentGrids[i - 1].RenderTransform = indivisualTransform;
 
                 }
+
                 
+
 
             }
             
@@ -233,6 +258,8 @@ namespace MordernClock
             }
 
 
-        }
+        
+
+    }
 
     }
