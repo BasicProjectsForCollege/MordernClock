@@ -5,8 +5,8 @@
        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
        xmlns:local="clr-namespace:MordernClock"  
        mc:Ignorable="d"  
-       Title="MainWindow" Height="900" Width="1600"
-       KeyDown="OnInput"
+       Title="MainWindow" Height="1000" Width="1000"
+       WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         >
         
      
@@ -20,11 +20,7 @@
            <Setter Property="VerticalAlignment" Value="Center"/>  
            <Setter Property="TextAlignment" Value="Center"/>  
        </Style>  
-       <Style TargetType="Rectangle">  
-           <Setter Property="Fill" Value="#333c47"/>  
-           <Setter Property="RadiusX" Value="5"/>  
-           <Setter Property="RadiusY" Value="5"/>  
-       </Style>  
+
        <Style TargetType="Border" x:Key="ShadowBox">  
            <Setter Property="Effect">
                 <Setter.Value>
@@ -114,7 +110,7 @@
                 <DropShadowEffect Direction="0" BlurRadius="10" ShadowDepth="7" Color="Wheat" Opacity="1"></DropShadowEffect>
             </Border.Effect>
 
-            <Rectangle Height="50" Margin="20,0,20,0" RadiusX="5" RadiusY="5" Stroke="White" Fill="Transparent">
+            <Rectangle Height="40" Margin="20,0,20,0" RadiusX="5" RadiusY="5" Stroke="White" Fill="Transparent">
             </Rectangle>
         </Border>
     </Grid>
