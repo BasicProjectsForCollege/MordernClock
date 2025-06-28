@@ -1,12 +1,15 @@
 ﻿
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
-using System.Reflection;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MordernClock
 {
@@ -17,7 +20,7 @@ namespace MordernClock
     {
        
         Color Color = Color.FromArgb(255, 51, 51, 51);
-        
+       
         TranslateTransform[] gridTransforms = new TranslateTransform[3];
         double[] currPositions = new double[3];
         int offset = 50;
@@ -28,11 +31,11 @@ namespace MordernClock
             DataContext = this;
             GENERATEGRIDCOLUMNS();
             OnMainGrid();
-
+          
 
 
         }
-        
+
         TimeSpan time = new TimeSpan(0, 0, 0);
         void OnInput(object sender,KeyEventArgs e)
         {
@@ -70,30 +73,60 @@ namespace MordernClock
             }
             
         }
-
-        void Oscilation(UserControl user, int row)
+        IEasingFunction ease = new MordernClock.EasingFunction
         {
-            int count = 0;
-            TranslateTransform translateTransform = new TranslateTransform();
-            user.RenderTransform = translateTransform;
-
-            double up = Math.Sin(count * (Math.PI / ( row)));
-            double from = up>0 ? 0 : offset * row;
-            double to = up<0 ? -offset * row :0;
-
-            DoubleAnimation animation = new DoubleAnimation
+            EasingMode = EasingMode.EaseInOut
+        };
+        
+        
+       
+        void StartCycle(Dictionary<int,UserControl> Col)
+        {
+            DispatcherTimer timer = new DispatcherTimer()
             {
-                From = from,
-                To = to,
-                Duration = new Duration(TimeSpan.FromSeconds(1)),
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever
+                Interval = TimeSpan.FromSeconds(1),
             };
+            TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+            DateTime local;
+            timer.Tick += (s, e) =>
+            {
                 
-            
-            translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
-            count++;
+                local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                string Time_ = local.ToString("HHmmss");
+                Debug.WriteLine(Time_);
+                
+               foreach(var pair in Col) 
+               {
+                    UserControl g = pair.Value;
+                    int rowCount = pair.Key;
+                    int digit = Time_[rowCount-1] - '0';
+                    AnimateGrid(g, digit);
+                    
+               }
+                
 
+            };
+            timer.Start();
+        }
+
+
+        void AnimateGrid(UserControl grid,int digits)
+        {
+
+            if (!(grid.RenderTransform is TranslateTransform tt))
+            {
+                tt = new TranslateTransform();
+                grid.RenderTransform = tt;
+            }
+           
+
+            DoubleAnimation anima = new DoubleAnimation()
+            {
+                To= -(digits*offset),
+                Duration = TimeSpan.FromSeconds(0.4),
+                EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
+            };
+            tt.BeginAnimation(TranslateTransform.YProperty, anima);
         }
 
         Grid[] Grids = new Grid[3];
@@ -112,16 +145,6 @@ namespace MordernClock
                     };
                     Main.ColumnDefinitions.Add(columns[i]);
                 }
-                else
-                {
-                    columns[i] = new ColumnDefinition
-                    {
-                        Width = new GridLength(1, GridUnitType.Star)
-                    };
-                    Main.ColumnDefinitions.Add(columns[i]);
-                }
-                
-
             }
 
         }
@@ -226,40 +249,72 @@ namespace MordernClock
             return wrapper;
         }
 
-        int count = 2;
+        
+
+        void SetRegion(string Region)
+        {
+            Grid WinPopup = new Grid() {
+                Background = new SolidColorBrush(Color.FromArgb(255, 31, 31, 31)),
+                Height = 500,
+                Width = 500,
+            };
+
+            Window popup = new Window()
+            {
+                Background = new SolidColorBrush(Color.FromArgb(255,31,31,31)),
+                Height= 500,
+                Width=500,
+            };
+            
+
+
+        }
         
 
         void OnMainGrid()
         {
+            Dictionary<int, UserControl> GridCol = new Dictionary<int, UserControl>();
+
+            //string HR = "", MIN = "", SEC = "";
+            int c = 0;
             UserControl grid0 = GenGrid(0,3);
+            grid0.Margin = new Thickness(100, 100, 0, 0);
             Grid.SetColumn(grid0, 0);
             Main.Children.Add(grid0);
-            Oscilation(grid0, 3);
+            GridCol.Add(1,grid0);
 
-            UserControl grid1 = GenGrid(1, 6);
-            grid1.Margin = new Thickness(0, 0, 0, offset);
+            UserControl grid1 = GenGrid(2, 10);
+            grid1.Margin = new Thickness(0, offset*9, 0, 0);
             Grid.SetColumn(grid1, 1);
             Main.Children.Add(grid1);
+            GridCol.Add(2, grid1);
 
-            UserControl grid3 = GenGrid(1, 6);
-            grid3.Margin = new Thickness(0, 0, 0, offset);
+            UserControl grid2 = GenGrid(1, 6);
+            grid2.Margin = new Thickness(0, offset*5, 0, 0);
+            Grid.SetColumn(grid2, 2);
+            Main.Children.Add(grid2);
+            GridCol.Add(3, grid2);
+
+
+            UserControl grid3 = GenGrid(2, 10);
+            grid3.Margin = new Thickness(0, offset*9, 0, 0);
             Grid.SetColumn(grid3, 3);
             Main.Children.Add(grid3);
+            GridCol.Add(4, grid3);
 
-            UserControl grid4 = GenGrid(2, 10);
-            grid4.Margin = new Thickness(0, 0, 0, offset);
+            UserControl grid4 = GenGrid(1, 6);
+            grid4.Margin = new Thickness(0, offset*5, 0, 0);
             Grid.SetColumn(grid4, 4);
             Main.Children.Add(grid4);
+            GridCol.Add(5, grid4);
 
-            UserControl grid6 = GenGrid(1, 6);
-            grid6.Margin = new Thickness(0, 0, 0, offset);
-            Grid.SetColumn(grid6, 6);
-            Main.Children.Add(grid6);
-
-            UserControl grid7 = GenGrid(2, 10);
-            grid7.Margin = new Thickness(0, 0, 0, offset);
-            Grid.SetColumn(grid7, 7);
-            Main.Children.Add(grid7);
+            UserControl grid5 = GenGrid(2, 10);
+            grid5.Margin = new Thickness(0, offset*9, 100, 0);
+            Grid.SetColumn(grid5, 5);
+            Main.Children.Add(grid5);
+            GridCol.Add(6, grid5);
+            
+            StartCycle(GridCol);
 
         }
 
